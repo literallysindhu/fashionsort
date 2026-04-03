@@ -1,9 +1,120 @@
+let victoryVideoBlobUrl = "assets/animate (4).mp4";
+let guideVideoBlobUrl = "assets/animate (2).mp4";
+let cutsceneVideoBlobUrl = "assets/final cutsceneeee.mp4";
+
 const PRELOADED_CANDIES = [
     { name: "Sour Candy", count: 2, img: "assets/sour candy.png" },
     { name: "Lollipop", count: 3, img: "assets/lollipop.png" },
     { name: "Milk Chocolate", count: 5, img: "assets/chocolate.png" },
     { name: "Toffee", count: 6, img: "assets/toffee.png" }
 ];
+
+const ASSETS_TO_PRELOAD = [
+    { url: "assets/final cutsceneeee.mp4", id: "cutscene-video", isMedia: true },
+    { url: "assets/animate (2).mp4", id: "guide-video", isMedia: true },
+    { url: "assets/animate (4).mp4", isVictoryVideo: true },
+    { url: "assets/soft & nostalgic barbie piano instrumentals.mp3", id: "game-bgm", isMedia: true },
+    { url: "assets/candy_purse.png", id: "purse-img", isImage: true },
+    { url: "assets/sour candy.png", candyIndex: 0 },
+    { url: "assets/lollipop.png", candyIndex: 1 },
+    { url: "assets/chocolate.png", candyIndex: 2 },
+    { url: "assets/toffee.png", candyIndex: 3 },
+    { url: "assets/Instructions and Main Game Screen.png", isBg: "title,story,game" },
+    { url: "assets/candy_levelup.png", isBg: "end" }
+];
+
+function preloadAssets() {
+    const progressEl = document.getElementById('progress-bar');
+    const progressTextEl = document.getElementById('loading-text');
+
+    const downloadPromises = ASSETS_TO_PRELOAD.map(asset => {
+        return new Promise((resolve) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', asset.url, true);
+            xhr.responseType = 'blob';
+
+            let defaultTotal = 100000;
+            if (asset.url.includes("cutscene")) defaultTotal = 26000000;
+            else if (asset.url.includes("bgm")) defaultTotal = 8000000;
+            else if (asset.url.includes("animate")) defaultTotal = 1500000;
+
+            xhr.onprogress = (e) => {
+                asset.loaded = e.loaded;
+                asset.total = e.lengthComputable ? e.total : Math.max(e.loaded, defaultTotal);
+                updateGlobalProgress();
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    const blobUrl = URL.createObjectURL(xhr.response);
+                    
+                    if (asset.id && asset.isMedia) {
+                        const el = document.getElementById(asset.id);
+                        el.src = blobUrl;
+                        el.load(); 
+                    } else if (asset.id && asset.isImage) {
+                        document.getElementById(asset.id).src = blobUrl;
+                    }
+
+                    if (asset.isVictoryVideo) victoryVideoBlobUrl = blobUrl;
+                    if (asset.id === 'guide-video') guideVideoBlobUrl = blobUrl;
+                    if (asset.id === 'cutscene-video') cutsceneVideoBlobUrl = blobUrl;
+
+                    if (asset.candyIndex !== undefined) {
+                        PRELOADED_CANDIES[asset.candyIndex].img = blobUrl;
+                    }
+
+                    if (asset.isBg) {
+                        const styleNode = document.createElement('style');
+                        let cssRules = '';
+                        asset.isBg.split(',').forEach(prefix => {
+                            cssRules += `#${prefix}-screen { background-image: url('${blobUrl}') !important; }\n`;
+                        });
+                        styleNode.innerHTML = cssRules;
+                        document.head.appendChild(styleNode);
+                    }
+
+                    asset.loaded = asset.total || defaultTotal;
+                    updateGlobalProgress();
+                    resolve();
+                } else {
+                    console.error("Failed loading: " + asset.url);
+                    resolve(); 
+                }
+            };
+            xhr.onerror = () => {
+                console.error("Error fetching: " + asset.url);
+                resolve();
+            };
+            xhr.send();
+        });
+    });
+
+    function updateGlobalProgress() {
+        let currentLoaded = 0;
+        let totalBytes = 0;
+        ASSETS_TO_PRELOAD.forEach(a => {
+            if (a.loaded) currentLoaded += a.loaded;
+            if (a.total) totalBytes += a.total;
+        });
+
+        if (totalBytes > 0) {
+            let prcnt = Math.min(100, Math.floor((currentLoaded / totalBytes) * 100));
+            if (progressEl) progressEl.style.width = prcnt + '%';
+            if (progressTextEl) progressTextEl.innerText = prcnt + '%';
+        }
+    }
+
+    Promise.all(downloadPromises).then(() => {
+        setTimeout(() => {
+            const loadScreen = document.getElementById('loading-screen');
+            if (loadScreen) loadScreen.classList.remove('active-screen');
+            screens.title.classList.add('active-screen');
+        }, 500); // 500ms safety buffer to let UI snap fully
+    });
+}
+
+window.addEventListener('DOMContentLoaded', preloadAssets);
 
 let CANDY_TYPES = {};
 let root;
@@ -42,6 +153,7 @@ document.getElementById('skip-cutscene-btn').onclick = () => {
 document.getElementById('replay-cutscene-btn').onclick = () => {
     showScreen('cutscene');
     const video = document.getElementById('cutscene-video');
+    video.src = cutsceneVideoBlobUrl; // Ensure replay hits the blob array buffer!
     video.currentTime = 0;
     video.play().catch(e => console.log('Video auto-play blocked', e));
 };
@@ -320,7 +432,7 @@ function handleCandyClick(e, candyDOM) {
                 
                 setTimeout(() => {
                     // Update to the final hooray victory video!
-                    videoObj.src = "assets/animate (4).mp4";
+                    videoObj.src = victoryVideoBlobUrl;
                     videoObj.muted = false;
                     videoObj.loop = false;
                     
@@ -351,7 +463,7 @@ function handleCandyClick(e, candyDOM) {
                             videoFrame.classList.remove('zoomed');
                             
                             // Restate the looped guide video for the next round
-                            videoObj.src = "assets/animate (2).mp4";
+                            videoObj.src = guideVideoBlobUrl;
                             videoObj.muted = true;
                             videoObj.loop = true;
                             videoObj.play();

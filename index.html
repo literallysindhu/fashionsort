@@ -15,8 +15,21 @@
   <!-- GLOBAL UI Element -->
   <button id="mute-btn" class="fixed-btn" style="top: 25px; right: 25px;">🔊</button>
 
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen" class="screen active-screen">
+    <div class="panel title-panel" style="background: rgba(255, 230, 240, 0.95); box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3), 0 0 0 8px rgba(255, 255, 255, 0.4); border-radius: 20px;">
+      <h1 class="glitter-text" style="font-size: 2.8em;">Preparing Runway...</h1>
+      <p style="font-size: 20px; font-weight: bold; color: #ff3278; margin-bottom: 20px;">Loading high-quality assets so your game doesn't lag!</p>
+      
+      <div id="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+      <p id="loading-text" style="font-weight: 900; font-size: 20px; color: #ff3278; margin-top: 15px;">0%</p>
+    </div>
+  </div>
+
   <!-- TITLE SCREEN -->
-  <div id="title-screen" class="screen active-screen">
+  <div id="title-screen" class="screen">
     <div class="panel title-panel">
       <h1 class="glitter-text">Fashion Crisis: Merge Sort Edition</h1>
       <p style="font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px rgba(255,105,180,0.8);">Interactive Fashion Show</p>
