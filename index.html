@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fashion Crisis: Merge Sort Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- GLOBAL UI Element -->
+  <button id="mute-btn" class="fixed-btn" style="top: 25px; right: 25px;">🔊</button>
+
+  <!-- TITLE SCREEN -->
+  <div id="title-screen" class="screen active-screen">
+    <div class="panel title-panel">
+      <h1 class="glitter-text">Fashion Crisis: Merge Sort Edition</h1>
+      <p style="font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px rgba(255,105,180,0.8);">Interactive Fashion Show</p>
+      <button class="btn glitter-btn" id="start-btn">Start Game ✨</button>
+    </div>
+  </div>
+
+  <!-- CUTSCENE SCREEN -->
+  <div id="cutscene-screen" class="screen" style="background-color: black;">
+    <video id="cutscene-video" width="100%" height="100%" style="object-fit: contain;">
+      <source src="assets/final cutsceneeee.mp4" type="video/mp4">
+    </video>
+    <button id="skip-cutscene-btn" style="position: absolute; bottom: 30px; right: 30px; width: 120px; height: 50px; background: rgba(255,105,180,0.8); color: white; border: 3px solid white; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; z-index: 100;">Skip &gt;&gt;</button>
+  </div>
+
+  <!-- STORY SCREEN -->
+  <div id="story-screen" class="screen">
+    <div class="panel glitter-panel">
+      <img id="purse-img" src="assets/candy_purse.png" alt="Candy Purse">
+      <h2 class="glitter-text-small">Barbie's magical purse jumbled all 16 candies!</h2>
+      <p style="font-size: 20px; font-weight: bold;">Instead of typical sorting, YOU will help her sort exactly like a CSE Engineer!</p>
+      <br>
+      <div style="text-align: left; font-size: 18px; line-height: 1.5;">
+        <p>✨ <b>DIVIDE PHASE:</b> Click on the Pink boxes to split them in half until every candy sits in its own tiny box!</p>
+        <p>✨ <b>MERGE PHASE:</b> Green boxes are "Ready to Merge". Click on the <b>SMALLER</b> candy to bring it up. Follow Merge Sort rules!</p>
+      </div>
+      <div style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
+        <button class="secondary-btn" id="replay-cutscene-btn">Rewatch Cutscene 🎬</button>
+        <button class="btn glitter-btn" id="story-btn" style="margin-top: 0;">Let's Sort! 🎀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <button id="restart-lvl-btn" class="fixed-btn" style="top: 25px; left: 25px; padding: 10px 20px; font-size: 18px;">🔄 New Level</button>
+    
+    <div id="top-bar-container">
+      <div id="video-frame">
+        <video id="guide-video" src="assets/animate%20(2).mp4" autoplay loop muted playsinline></video>
+        <div id="video-freeze-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; color: white;">
+          <h1 class="glitter-text" style="font-size: 5em;">Click to Proceed</h1>
+          <p style="font-size: 2em; font-weight: bold; text-shadow: 2px 2px 5px rgba(0,0,0,0.6);">Head to the Fashion Show! ✨</p>
+        </div>
+      </div>
+      <div id="top-message"></div>
+    </div>
+    
+    <div id="legend"></div>
+    
+    <!-- SVG layer for rendering connector lines behind elements -->
+    <svg id="lines-svg"></svg>
+    
+    <!-- Tree UI structure nodes -->
+    <div id="game-container"></div>
+    
+    <!-- Absolutely positioned dynamic animations for Candies -->
+    <div id="candies-container"></div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="end-screen" class="screen">
+    <div class="panel title-panel">
+      <h1 class="glitter-text">Fashion Show was a huge success!</h1>
+      <p style="font-size: 24px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px rgba(255,105,180,0.8);">Everybody received their perfectly matched candy!</p>
+      <button class="btn glitter-btn" id="replay-btn">Play Again 💖</button>
+    </div>
+  </div>
+
+  <audio id="game-bgm" loop>
+    <source src="assets/soft &amp; nostalgic barbie piano instrumentals.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
